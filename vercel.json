@@ -2,23 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "index1.html",
+      "src": "**/*",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/",
-      "dest": "/index1.html"
+      "dest": "/index.html"
     },
     {
       "src": "/(.*)",
       "dest": "/$1"
     }
-  ],
-  "functions": {
-    "index1.html": {
-      "includeFiles": "**"
-    }
-  }
+  ]
 }
