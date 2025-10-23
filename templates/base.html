@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestión Educativa</title>
+  <style>
+    :root {
+      /* Paleta sólida tipo producción */
+      --blue: #0d6efd;
+      --blue-dark: #0b5ed7;
+      --green: #198754;
+      --green-dark: #157347;
+      --gray: #6c757d;
+      --amber: #ffc107;
+      --amber-dark: #e0a800;
+      --red: #dc3545;
+      --red-dark: #bb2d3b;
+
+      --primary: var(--blue);
+      --primary-dark: var(--blue-dark);
+      --bg: #f8f9fa;
+      --text: #212529;
+      --border: #dee2e6;
+      --white: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background: var(--bg); color: var(--text); }
+
+    /* Layout con barra lateral izquierda fija */
+    .layout { min-height: 100vh; }
+    .content { max-width: 1100px; margin: 0 auto; padding: 24px 20px; margin-left: 320px; }
+    /* Sidebar azul plano, texto blanco */
+    .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 300px; background: var(--blue-dark); color: #fff; box-shadow: 4px 0 16px rgba(0,0,0,.12); padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+    .brand { font-weight: 800; letter-spacing: .3px; font-size: 18px; }
+    .menu { display: flex; flex-direction: column; gap: 6px; }
+    .menu a { color: #fff; text-decoration: none; padding: 8px 10px; border-radius: 8px; }
+    .menu a:hover { background: rgba(255,255,255,.15); }
+    .menu a.active { background: rgba(255,255,255,.35); font-weight: 700; border-left: 4px solid var(--white); }
+    .side-card { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); border-radius: 10px; padding: 10px; }
+
+    .card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,.06); padding: 18px; margin-bottom: 18px; }
+    h1 { margin: 0 0 12px; }
+    h2 { margin: 8px 0 10px; }
+
+    .table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); background: var(--white); border-radius: 10px; overflow: hidden; }
+    .table th, .table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    .table th { background: #f3f8fd; text-align: left; }
+    .table tr:nth-child(even) { background: #f9fcff; }
+
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--white); color: var(--text); text-decoration: none; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,.05); transition: filter .15s ease, transform .05s ease; }
+    .btn:hover { filter: brightness(97%); }
+
+    /* Colores de botón sólidos (estilo real) */
+    .btn-primary { background: var(--blue) !important; border-color: var(--blue) !important; color: var(--white) !important; }
+    .btn-primary:hover { background: var(--blue-dark) !important; border-color: var(--blue-dark) !important; }
+
+    .btn-success { background: var(--green) !important; border-color: var(--green) !important; color: var(--white) !important; }
+    .btn-success:hover { background: var(--green-dark) !important; border-color: var(--green-dark) !important; }
+
+    .btn-secondary { background: #495057 !important; border-color: #495057 !important; color: var(--white) !important; }
+    .btn-secondary:hover { filter: brightness(95%) !important; }
+
+    .btn-warning { background: var(--amber) !important; border-color: var(--amber) !important; color: #212529 !important; }
+    .btn-warning:hover { background: var(--amber-dark) !important; border-color: var(--amber-dark) !important; }
+
+    .btn-danger { background: var(--red) !important; border-color: var(--red) !important; color: var(--white) !important; }
+    .btn-danger:hover { background: var(--red-dark) !important; border-color: var(--red-dark) !important; }
+
+    .form { max-width: 720px; }
+    label { display: block; margin: 10px 0 6px; font-weight: 700; }
+    input[type=text], input[type=email], input[type=date], input[type=number], textarea, select {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--white);
+    }
+
+    .flash { padding: 10px 14px; border-radius: 10px; margin-bottom: 12px; }
+    .flash.error { background: #ffe3e6; color: #7a0b17; }
+    .flash.success { background: #e7f6ee; color: #095532; }
+
+    .actions-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .section-title { display: flex; align-items: center; justify-content: space-between; }
+
+    .create-actions { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .small { opacity: .85; font-size: 13px; }
+
+    /* Crear rápido: respeta colores de cada tipo de botón */
+    .create-actions .btn {
+      font-family: inherit;
+      font-weight: 600;
+      text-transform: none;
+      letter-spacing: .2px;
+    }
+    .create-actions .btn:hover {
+      filter: brightness(97%);
+    }
+    /* Refuerzo específico: Crear rápido con colores sólidos */
+    .create-actions .btn-primary { background: var(--blue) !important; border-color: var(--blue) !important; color: var(--white) !important; }
+    .create-actions .btn-success { background: var(--green) !important; border-color: var(--green) !important; color: var(--white) !important; }
+    .create-actions .btn-secondary { background: #495057 !important; border-color: #495057 !important; color: var(--white) !important; }
+    .create-actions .btn-warning { background: var(--amber) !important; border-color: var(--amber) !important; color: #212529 !important; }
+    .create-actions .btn-danger { background: var(--red) !important; border-color: var(--red) !important; color: var(--white) !important; }
+
+    /* Texto de botones unificado con el resto de la interfaz */
+    .btn {
+      font-family: inherit;
+      text-transform: none;
+      letter-spacing: .2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <main class="content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+
+    <aside class="sidebar">
+      <div class="brand">Gestión Educativa</div>
+      <div class="side-card small">Navega y crea registros. La barra permanece fija al lado izquierdo para acceso rápido.</div>
+      {% set ep = request.endpoint %}
+      <nav class="menu">
+        <a href="{{ url_for('index') }}" class="{{ 'active' if ep == 'index' else '' }}">Inicio</a>
+        <a href="{{ url_for('alumnos_list') }}" class="{{ 'active' if ep and 'alumnos' in ep else '' }}">Alumnos</a>
+        <a href="{{ url_for('cursos_list') }}" class="{{ 'active' if ep and 'cursos' in ep else '' }}">Cursos</a>
+        <a href="{{ url_for('tareas_list') }}" class="{{ 'active' if ep and 'tareas' in ep else '' }}">Tareas</a>
+        <a href="{{ url_for('notas_list') }}" class="{{ 'active' if ep and 'notas' in ep else '' }}">Notas</a>
+      </nav>
+      <div class="side-card">
+        <div class="small" style="margin-bottom:8px; font-weight:700;">Crear rápido</div>
+        <div class="create-actions">
+          <a class="btn btn-success" href="{{ url_for('alumnos_create') }}">Crear alumno</a>
+          <a class="btn btn-secondary" href="{{ url_for('cursos_create') }}">Crear curso</a>
+          <a class="btn btn-warning" href="{{ url_for('tareas_create') }}">Crear tarea</a>
+          <a class="btn btn-primary" href="{{ url_for('notas_create') }}">Crear nota</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

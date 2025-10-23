@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="card">
+    <h1>{{ 'Editar tarea' if tarea else 'Nueva tarea' }}</h1>
+    <form method="post" class="form">
+      <label>Nombre</label>
+      <input type="text" name="nombre" value="{{ tarea.nombre if tarea else '' }}" required>
+
+      <label>Descripción</label>
+      <textarea name="descripcion">{{ tarea.descripcion if tarea else '' }}</textarea>
+
+      <label>Fecha límite</label>
+      <input type="date" name="fecha_limite" value="{{ tarea.fecha_limite if tarea and tarea.fecha_limite else '' }}">
+
+      <label><input type="checkbox" name="completada" {% if tarea and tarea.completada %}checked{% endif %}> Completada</label>
+
+      <p class="actions-row">
+        <button class="btn btn-primary" type="submit">Guardar</button>
+        <a class="btn btn-secondary" href="{{ url_for('tareas_list') }}">Cancelar</a>
+      </p>
+    </form>
+  </div>
+{% endblock %}

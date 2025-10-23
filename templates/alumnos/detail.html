@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="card">
+    <h1>Alumno: {{ alumno.nombre }} {{ alumno.apellido }}</h1>
+    <p>Email: {{ alumno.email }}</p>
+    <p class="actions-row">
+      <a class="btn btn-warning" href="{{ url_for('alumnos_edit', alumno_id=alumno.id) }}">Editar alumno</a>
+      <a class="btn btn-success" href="{{ url_for('notas_create') }}?alumno_id={{ alumno.id }}">Agregar nota</a>
+      <a class="btn btn-secondary" href="{{ url_for('alumnos_list') }}">Volver al listado</a>
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Notas del alumno</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Valor</th>
+          <th>Curso</th>
+          <th>Tarea</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for n in notas %}
+          <tr>
+            <td>{{ n.id }}</td>
+            <td>{{ n.valor }}</td>
+            <td>{{ n.curso.nombre }}</td>
+            <td>{{ n.tarea.nombre }}</td>
+            <td>
+              <a class="btn btn-warning" href="{{ url_for('notas_edit', nota_id=n.id) }}">Editar nota</a>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5">Sin notas registradas todavía.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

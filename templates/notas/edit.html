@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="card">
+    <h1>Editar nota #{{ nota.id }}</h1>
+    <p>
+      Alumno: <strong>{{ nota.alumno.apellido }}, {{ nota.alumno.nombre }}</strong><br>
+      Curso: <strong>{{ nota.curso.nombre }}</strong><br>
+      Tarea: <strong>{{ nota.tarea.nombre }}</strong>
+    </p>
+    <form method="post" class="form">
+      <label>Valor</label>
+      <input type="number" step="0.01" name="valor" value="{{ nota.valor }}" required>
+      <p class="actions-row">
+        <button class="btn btn-primary" type="submit">Guardar</button>
+        <a class="btn btn-secondary" href="{{ url_for('notas_list') }}">Cancelar</a>
+      </p>
+    </form>
+  </div>
+{% endblock %}

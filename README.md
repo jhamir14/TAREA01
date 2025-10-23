@@ -1,113 +1,131 @@
-# 🌻 Flores de Amistad - TAREA01
+# Gestión Educativa (Flask + SQLAlchemy)
 
-Una hermosa página web interactiva con flores amarillas para celebrar la amistad, creada con HTML, CSS y JavaScript puro.
+Aplicación web para gestionar alumnos, cursos, tareas y notas. Incluye CRUDs sencillos, persistencia en SQLite y migraciones con Flask-Migrate.
 
-## 🚀 Deploy en Vercel
+## Tabla de contenido
+- [Características](#características)
+- [Requisitos](#requisitos)
+- [Instalación](#instalación)
+- [Configuración](#configuración)
+- [Ejecución en desarrollo](#ejecución-en-desarrollo)
+- [Migraciones de base de datos](#migraciones-de-base-de-datos)
+- [Despliegue en producción](#despliegue-en-producción)
+- [Rutas principales](#rutas-principales)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Solución de problemas](#solución-de-problemas)
+- [Licencia](#licencia)
 
-Este proyecto está configurado para ser desplegado fácilmente en Vercel. Sigue estos pasos:
+## Características
+- CRUD de `Alumnos`, `Cursos`, `Tareas` y `Notas`.
+- Plantillas Jinja2 con estilos consistentes.
+- Base de datos SQLite en `instance/educacion.db`.
+- Migraciones manejadas con `Flask-Migrate`.
 
-### Opción 1: Deploy desde GitHub (Recomendado)
+## Requisitos
+- Python 3.10+ (recomendado)
+- Pip
+- Windows PowerShell (para los comandos de ejemplo)
 
-1. **Sube tu código a GitHub:**
-   ```bash
-   git add .
-   git commit -m "Configuración para deploy en Vercel"
-   git push origin main
-   ```
+## Instalación
+```powershell
+# Clonar el repositorio (si aplica)
+# git clone <url-del-repo>
+# cd TAREA01
 
-2. **Conecta con Vercel:**
-   - Ve a [vercel.com](https://vercel.com)
-   - Inicia sesión con tu cuenta de GitHub
-   - Haz clic en "New Project"
-   - Selecciona tu repositorio `TAREA01`
-   - Vercel detectará automáticamente la configuración
+# Crear y activar entorno virtual
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 
-3. **Deploy automático:**
-   - Vercel usará el archivo `vercel.json` para la configuración
-   - El deploy se completará en unos minutos
-   - Obtendrás una URL pública para tu proyecto
-
-### Opción 2: Deploy con Vercel CLI
-
-1. **Instala Vercel CLI:**
-   ```bash
-   npm install -g vercel
-   ```
-
-2. **Inicia sesión:**
-   ```bash
-   vercel login
-   ```
-
-3. **Deploy del proyecto:**
-   ```bash
-   # Para preview
-   vercel
-   
-   # Para producción
-   vercel --prod
-   ```
-
-## 📁 Estructura del Proyecto
-
+# Instalar dependencias
+pip install -r requirements.txt
 ```
+
+## Configuración
+- Variables típicas de entorno:
+```powershell
+$env:FLASK_APP="app.py"
+$env:FLASK_DEBUG="1"   # activar recarga automática en desarrollo
+```
+- La base de datos se crea en `instance/educacion.db` (carpeta generada automáticamente por Flask si no existe).
+
+## Ejecución en desarrollo
+```powershell
+python -m flask run
+# Por defecto, se expone en http://127.0.0.1:5000/
+```
+
+## Migraciones de base de datos
+Generadas a partir de los modelos en `models.py`.
+```powershell
+# Inicializar (solo una vez)
+flask db init
+
+# Crear migración inicial (o tras cambios de modelos)
+flask db migrate -m "tablas iniciales"
+
+# Aplicar migraciones
+flask db upgrade
+```
+
+## Despliegue en producción
+Ejemplo con `waitress` (WSGI para Windows):
+```powershell
+pip install waitress
+waitress-serve --call app:app
+```
+
+## Rutas principales
+- `/` — Página de inicio.
+- `/alumnos` — Listado, creación y detalle de alumnos.
+- `/cursos` — Listado y creación de cursos.
+- `/tareas` — Listado y creación de tareas.
+- `/notas` — Listado, creación y edición de notas.
+
+> Nota: Los endpoints exactos y métodos (GET/POST) se definen en `app.py`.
+
+## Estructura del proyecto
+```text
 TAREA01/
-├── index.html          # Página de redirección
-├── index1.html         # Página principal con flores
-├── script.js           # JavaScript para interactividad
-├── styles.css          # Estilos CSS
-├── flores_amistad.html # Versión alternativa de flores
-├── vercel.json         # Configuración de Vercel
-├── package.json        # Configuración del proyecto
-├── floreditado.mp3     # Audio de fondo
-├── flormusica.mp3      # Audio adicional
-└── README.md           # Este archivo
+├── app.py
+├── models.py
+├── requirements.txt
+├── instance/
+│   └── educacion.db
+├── migrations/
+│   ├── env.py
+│   ├── script.py.mako
+│   └── versions/
+│       └── f7e5fb4da5f4_tablas_iniciales.py
+└── templates/
+    ├── base.html
+    ├── index.html
+    ├── alumnos/
+    │   ├── list.html
+    │   ├── form.html
+    │   └── detail.html
+    ├── cursos/
+    │   ├── list.html
+    │   └── form.html
+    ├── tareas/
+    │   ├── list.html
+    │   └── form.html
+    └── notas/
+        ├── list.html
+        ├── form.html
+        └── edit.html
 ```
 
-## 🌟 Características
-
-- ✨ Flores amarillas animadas con CSS
-- 🎵 Audio de fondo opcional
-- 📱 Diseño responsive
-- 🎨 Animaciones suaves y atractivas
-- 💛 Tema de amistad con mensajes emotivos
-
-## 🛠️ Tecnologías Utilizadas
-
-- **HTML5** - Estructura semántica
-- **CSS3** - Estilos y animaciones
-- **JavaScript** - Interactividad
-- **Vercel** - Hosting y deploy
-
-## 📝 Scripts Disponibles
-
-```bash
-# Desarrollo local con Vercel
-npm run dev
-
-# Preview del deploy
-npm run preview
-
-# Deploy a producción
-npm run deploy
+## Solución de problemas
+- Cambios de estilos no se ven:
+  - Forzar refresco: `Ctrl+F5` o usar ventana de incógnito.
+- Puerto ocupado al iniciar Flask:
+```powershell
+Get-Process -Name python -ErrorAction SilentlyContinue |
+  Where-Object { $_.Path -like "*flask*" -or $_.Path -like "*python*" } |
+  Stop-Process -Force
 ```
+- Migraciones no aplican:
+  - Verificar que `FLASK_APP` está configurado y que `models.py` define correctamente los modelos.
 
-## 🔧 Configuración
-
-El archivo `vercel.json` está configurado para:
-- Servir `index1.html` como página principal
-- Manejar rutas estáticas
-- Incluir todos los archivos necesarios
-
-## 🌐 URL del Proyecto
-
-Una vez desplegado, tu proyecto estará disponible en:
-`https://tu-proyecto.vercel.app`
-
-## 👨‍💻 Autor
-
-**Jhamir** - Proyecto de flores de amistad
-
----
-
-¡Disfruta compartiendo estas hermosas flores digitales con tus amigos! 🌻💛
+## Licencia
+Uso académico/educativo. Ajusta la licencia según tus necesidades.

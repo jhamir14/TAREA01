@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="card">
+    <div class="section-title">
+      <h1>Notas</h1>
+      <a class="btn btn-success" href="{{ url_for('notas_create') }}">Nueva nota</a>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Valor</th>
+          <th>Alumno</th>
+          <th>Curso</th>
+          <th>Tarea</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for n in notas %}
+          <tr>
+            <td>{{ n.id }}</td>
+            <td>{{ n.valor }}</td>
+            <td><a href="{{ url_for('alumnos_detail', alumno_id=n.alumno.id) }}">{{ n.alumno.nombre }} {{ n.alumno.apellido }}</a></td>
+            <td>{{ n.curso.nombre }}</td>
+            <td>{{ n.tarea.nombre }}</td>
+            <td>
+              <a class="btn btn-warning" href="{{ url_for('notas_edit', nota_id=n.id) }}">Editar</a>
+              <form action="{{ url_for('notas_delete', nota_id=n.id) }}" method="post" style="display:inline" onsubmit="return confirm('¿Eliminar nota?');">
+                <button class="btn btn-danger" type="submit">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
