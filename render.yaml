@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: restaurante-backend
+    env: python
+    rootDir: backend
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
+    postDeployCommand: flask --app app db upgrade
+    envVars:
+      - key: DATABASE_URL
+        # Reemplaza con tu cadena de conexión MySQL en Render o externo
+        value: mysql+pymysql://USER:PASS@HOST:PORT/DBNAME
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: FRONTEND_ORIGIN
+        # Apunta al dominio del frontend (si aplica), ej: https://restaurante-frontend.onrender.com
+        value: ""
+
+  - type: static
+    name: restaurante-frontend
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        # URL pública del backend, se puede actualizar después del primer deploy
+        value: https://restaurante-backend.onrender.com

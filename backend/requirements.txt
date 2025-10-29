@@ -5,3 +5,4 @@ Flask-CORS
 PyMySQL
 cryptography
 Flask-Migrate
+gunicorn

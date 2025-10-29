@@ -15,13 +15,19 @@ from routes.order_routes import order_bp
 app = Flask(__name__)
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
-# Conexión a MySQL (Railway)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:zyUJoHTgPdhIjZeiSaiiJSntOUPrYRsA@turntable.proxy.rlwy.net:15581/railway'
+
+# Configuración desde variables de entorno (apta para Render)
+db_url = os.environ.get('DATABASE_URL')
+if not db_url:
+    # Fallback local para desarrollo (SQLite en archivo)
+    db_url = f"sqlite:///{os.path.join(basedir, 'database.db')}"
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     'pool_pre_ping': True,
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = 'super-secret-key'  # Cambiar en producción
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'super-secret-key')  # Cambiar en producción
 app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'uploads')
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
@@ -29,13 +35,18 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 IMG_DIR = os.path.abspath(os.path.join(basedir, '..', 'IMG'))
 
 # Inicializar extensiones
-# Permitir desarrollo desde puertos comunes de Vite y localhost
-CORS(app, resources={r"/api/*": {"origins": [
+# Permitir desarrollo desde puertos comunes de Vite y localhost y origen de producción configurable
+origins = [
     "http://localhost:3000",
     "http://localhost:5173",
     "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173"
-]}}, supports_credentials=True)
+    "http://127.0.0.1:5173",
+]
+frontend_origin = os.environ.get('FRONTEND_ORIGIN')
+if frontend_origin:
+    origins.append(frontend_origin)
+
+CORS(app, resources={r"/api/*": {"origins": origins}}, supports_credentials=True)
 jwt = JWTManager(app)
 db.init_app(app)
 Migrate(app, db)
