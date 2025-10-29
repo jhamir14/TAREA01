@@ -72,5 +72,14 @@ def img_file(filename):
 def health():
     return jsonify({'status': 'ok'}), 200
 
+# Ruta raíz informativa para evitar 404 en la URL base
+@app.route('/')
+def root():
+    return jsonify({
+        'message': 'Backend de Restaurante activo',
+        'health': '/api/health',
+        'api_base': '/api'
+    }), 200
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)
