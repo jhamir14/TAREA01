@@ -1,131 +1,126 @@
-# Gestión Educativa (Flask + SQLAlchemy)
+# Restaurante (Flask + React + SQLAlchemy)
 
-Aplicación web para gestionar alumnos, cursos, tareas y notas. Incluye CRUDs sencillos, persistencia en SQLite y migraciones con Flask-Migrate.
+Aplicación web para registro de pedidos de un restaurante, gestión de menú del día y administración de clientes. Backend en Flask y frontend en React (Vite + Tailwind).
 
-## Tabla de contenido
-- [Características](#características)
-- [Requisitos](#requisitos)
-- [Instalación](#instalación)
-- [Configuración](#configuración)
-- [Ejecución en desarrollo](#ejecución-en-desarrollo)
-- [Migraciones de base de datos](#migraciones-de-base-de-datos)
-- [Despliegue en producción](#despliegue-en-producción)
-- [Rutas principales](#rutas-principales)
-- [Estructura del proyecto](#estructura-del-proyecto)
-- [Solución de problemas](#solución-de-problemas)
-- [Licencia](#licencia)
+## Índice
+- Características
+- Requisitos
+- Estructura del proyecto
+- Desarrollo (local)
+- Variables de entorno
+- Migraciones
+- Despliegue en Render
+- Rutas principales (API)
+- Solución de problemas
 
 ## Características
-- CRUD de `Alumnos`, `Cursos`, `Tareas` y `Notas`.
-- Plantillas Jinja2 con estilos consistentes.
-- Base de datos SQLite en `instance/educacion.db`.
-- Migraciones manejadas con `Flask-Migrate`.
+- Gestión de productos y menú del día.
+- Registro de pedidos (mesa y delivery) y estados de pago.
+- Administración de clientes (no requieren credenciales).
+- Autenticación JWT para usuarios del sistema y panel admin.
+- CORS configurado para frontend local y dominio de producción.
+- Base de datos por defecto en SQLite (archivo `backend/database.db`).
 
 ## Requisitos
-- Python 3.10+ (recomendado)
-- Pip
-- Windows PowerShell (para los comandos de ejemplo)
-
-## Instalación
-```powershell
-# Clonar el repositorio (si aplica)
-# git clone <url-del-repo>
-# cd TAREA01
-
-# Crear y activar entorno virtual
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-
-# Instalar dependencias
-pip install -r requirements.txt
-```
-
-## Configuración
-- Variables típicas de entorno:
-```powershell
-$env:FLASK_APP="app.py"
-$env:FLASK_DEBUG="1"   # activar recarga automática en desarrollo
-```
-- La base de datos se crea en `instance/educacion.db` (carpeta generada automáticamente por Flask si no existe).
-
-## Ejecución en desarrollo
-```powershell
-python -m flask run
-# Por defecto, se expone en http://127.0.0.1:5000/
-```
-
-## Migraciones de base de datos
-Generadas a partir de los modelos en `models.py`.
-```powershell
-# Inicializar (solo una vez)
-flask db init
-
-# Crear migración inicial (o tras cambios de modelos)
-flask db migrate -m "tablas iniciales"
-
-# Aplicar migraciones
-flask db upgrade
-```
-
-## Despliegue en producción
-Ejemplo con `waitress` (WSGI para Windows):
-```powershell
-pip install waitress
-waitress-serve --call app:app
-```
-
-## Rutas principales
-- `/` — Página de inicio.
-- `/alumnos` — Listado, creación y detalle de alumnos.
-- `/cursos` — Listado y creación de cursos.
-- `/tareas` — Listado y creación de tareas.
-- `/notas` — Listado, creación y edición de notas.
-
-> Nota: Los endpoints exactos y métodos (GET/POST) se definen en `app.py`.
+- Python 3.10+.
+- Node.js 18+ y npm.
+- Windows PowerShell para los comandos de ejemplo.
 
 ## Estructura del proyecto
 ```text
 TAREA01/
-├── app.py
-├── models.py
-├── requirements.txt
-├── instance/
-│   └── educacion.db
-├── migrations/
-│   ├── env.py
-│   ├── script.py.mako
-│   └── versions/
-│       └── f7e5fb4da5f4_tablas_iniciales.py
-└── templates/
-    ├── base.html
-    ├── index.html
-    ├── alumnos/
-    │   ├── list.html
-    │   ├── form.html
-    │   └── detail.html
-    ├── cursos/
-    │   ├── list.html
-    │   └── form.html
-    ├── tareas/
-    │   ├── list.html
-    │   └── form.html
-    └── notas/
-        ├── list.html
-        ├── form.html
-        └── edit.html
+├── backend/
+│   ├── app.py
+│   ├── models.py
+│   ├── requirements.txt
+│   ├── migrations/
+│   ├── routes/
+│   ├── uploads/
+│   └── database.db                 # SQLite (local y fallback en Render)
+├── frontend/
+│   ├── index.html
+│   ├── package.json
+│   ├── src/
+│   └── public/
+├── IMG/
+└── render.yaml                     # Configuración de despliegue Render
 ```
+
+## Desarrollo (local)
+**Backend (SQLite por defecto)**
+- Crear entorno y dependencias:
+  - `cd backend`
+  - `python -m venv .venv`
+  - `./.venv/Scripts/Activate.ps1`
+  - `pip install -r requirements.txt`
+- Ejecutar en modo desarrollo:
+  - `./.venv/Scripts/python.exe app.py`
+- Acceso: `http://127.0.0.1:5000/`
+- Salud: `http://127.0.0.1:5000/api/health`
+
+**Frontend**
+- `cd frontend`
+- `npm ci`
+- Crear `.env` con:
+  - `VITE_API_URL=http://127.0.0.1:5000`
+- Ejecutar:
+  - `npm run dev`
+- Acceso: `http://localhost:3000/`
+
+## Variables de entorno
+- Backend
+  - `JWT_SECRET_KEY`: secreto para firmar JWT (requerido en producción).
+  - `FRONTEND_ORIGIN`: dominio público del frontend para CORS (opcional en local).
+  - `DATABASE_URL`: si NO se define, el backend usa `SQLite` en `backend/database.db`.
+- Frontend
+  - `VITE_API_URL`: URL del backend (incluye protocolo y sin slash final).
+
+## Migraciones
+- Inicializar (solo una vez):
+  - `flask --app app db init`
+- Crear migración (tras cambios de modelos):
+  - `flask --app app db migrate -m "actualización de modelos"`
+- Aplicar migraciones:
+  - `flask --app app db upgrade`
+
+## Despliegue en Render
+- Este repo incluye `render.yaml` para configurar:
+  - Servicio web backend (`env: python`, `rootDir: backend`).
+  - Comandos:
+    - Build: `pip install -r requirements.txt`
+    - Start: `gunicorn --bind 0.0.0.0:$PORT app:app`
+    - Post-deploy: `flask --app app db upgrade`
+  - Health check: usar `/api/health`.
+- Variables de entorno en Render (backend):
+  - `JWT_SECRET_KEY`: generar un valor seguro.
+  - `FRONTEND_ORIGIN`: p. ej. `https://restaurante-frontend.onrender.com`.
+  - No definir `DATABASE_URL` si se desea usar SQLite (fallback). Nota: en plan Free, el disco es efímero; los datos pueden reiniciarse en cada deploy.
+- Frontend está configurado como sitio estático:
+  - Build: `npm ci && npm run build`
+  - `staticPublishPath: dist`
+  - `VITE_API_URL`: apuntar al subdominio del backend de Render.
+
+## Rutas principales (API)
+- `GET /` — Respuesta informativa del backend.
+- `GET /api/health` — health check.
+- Autenticación (`/api/auth`): `POST /register`, `POST /login`.
+- Productos (`/api/products`): listar/crear/editar.
+- Menú del día (`/api/menu`): `GET /today`, `POST /add`, `DELETE /remove/:product_id`.
+- Carrito (`/api/cart`): operaciones para el usuario autenticado.
+- Pedidos (`/api/orders`): listar y `GET /history` (pagados).
+- Admin (`/api/admin`): `GET /users`, `POST /users`, `PUT /users/:id`, `POST /orders`.
 
 ## Solución de problemas
-- Cambios de estilos no se ven:
-  - Forzar refresco: `Ctrl+F5` o usar ventana de incógnito.
-- Puerto ocupado al iniciar Flask:
-```powershell
-Get-Process -Name python -ErrorAction SilentlyContinue |
-  Where-Object { $_.Path -like "*flask*" -or $_.Path -like "*python*" } |
-  Stop-Process -Force
-```
-- Migraciones no aplican:
-  - Verificar que `FLASK_APP` está configurado y que `models.py` define correctamente los modelos.
+- 404 al abrir el dominio en producción:
+  - Asegúrate de usar `https://tu-servicio.onrender.com/` (sin punto final).
+  - Verifica que el backend tenga la ruta `/` y que el health check use `/api/health`.
+- CORS desde el frontend:
+  - Define `FRONTEND_ORIGIN` con el dominio público del frontend.
+  - Confirma `VITE_API_URL` del frontend apunta al backend correcto.
+- Migraciones fallan en Render:
+  - Revisa logs del servicio; verifica que `Flask-Migrate` esté instalado y que `FLASK_APP` se aplique en `postDeployCommand`.
+- Persistencia en Render Free:
+  - SQLite puede reiniciarse en cada deploy. Usa un DB administrado (Railway, Render PostgreSQL) o instancia con disco persistente si necesitas datos duraderos.
 
-## Licencia
+---
 Uso académico/educativo. Ajusta la licencia según tus necesidades.

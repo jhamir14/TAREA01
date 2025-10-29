@@ -229,7 +229,7 @@ export default function AdminPanel() {
       <section className="mt-8">
         <h3 className="text-xl font-semibold mb-2">Clientes y pedidos</h3>
         <div className="bg-white/90 backdrop-blur border border-gray-200 rounded-xl shadow-sm divide-y">
-          {users.map(u => (
+          {users.filter(u => !u.is_admin).map(u => (
             <div key={u.id} className="py-3 px-4">
               <div className="mb-1">
                 <strong className="text-gray-900">{u.first_name || ''} {u.last_name || ''}</strong> {u.email && <span className="text-gray-700"> · {u.email}</span>}
@@ -257,7 +257,7 @@ export default function AdminPanel() {
               </ul>
             </div>
           ))}
-          {users.length === 0 && <div className="py-6 px-4 text-gray-600">Sin clientes</div>}
+          {users.filter(u => !u.is_admin).length === 0 && <div className="py-6 px-4 text-gray-600">Sin clientes</div>}
         </div>
       </section>
 
